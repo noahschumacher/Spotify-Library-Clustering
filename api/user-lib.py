@@ -28,8 +28,10 @@ except:
 spotObj = spotipy.Spotify(auth=token)
 
 
-lib = {}
-features = []
+lib = {}		## Dictionary of users songs
+features = []	## list of list of features of each song
+
+## Iterate for # of songs / 50
 for i in range(20):
 	off = i*50
 	results = spotObj.current_user_saved_tracks(limit=50, offset=off)
