@@ -5,9 +5,14 @@ import sys
 import json
 import spotipy
 import spotipy.util as util
+import pickle
+import time
+import numpy as np
 
 ## UserID = 12161016676
-username = sys.argv[1]
+#username = sys.argv[1]
+
+username = '12161016676'
 
 ## Setting permissions of app
 scope = 'user-library-read'
@@ -22,20 +27,39 @@ except:
 ## Create spotify object
 spotObj = spotipy.Spotify(auth=token)
 
-results = spotObj.current_user_saved_tracks(10)
 
 lib = {}
-for item in results['items']:
-	track = item['track']
+features = []
+for i in range(20):
+	off = i*50
+	results = spotObj.current_user_saved_tracks(limit=50, offset=off)
+
+	temp = {}
+	for item in results['items']:
+		track = item['track']
+		
+		temp[track['id']] = {'song_name':track['name'],
+					   		'song_id':track['id'],
+					   		'artist':track['artists'][0]['name'],
+					   		'artist_id':track['artists'][0]['id'],
+					   		'explicit':track['explicit'],
+					   		'duration':track['duration_ms']}
+	print("Completed:", i/22, '%')
+
+	temp_f = spotObj.audio_features(tracks=temp.keys())
+
+	lib.update(temp)
+	features.append(temp_f)
 	
-	lib[track['id']] = {'song_name':track['name'],
-				   		'song_id':track['id'],
-				   		'artist':track['artists'][0]['name'],
-				   		'artist_id':track['artists'][0]['id'],
-				   		'explicit':track['explicit'],
-				   		'duration':track['duration_ms']}
+	time.sleep(.5)
+
+features = np.array(features).reshape(-1)
+
+print(len(lib.keys()) == len(features))
 
 
+pickle.dump(lib, open('data/noah_mlib.p', 'wb'))
+pickle.dump(features, open('data/noah_mlib_features.p', 'wb'))
 
 '''
 {
