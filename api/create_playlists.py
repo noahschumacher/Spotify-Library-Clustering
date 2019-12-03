@@ -42,7 +42,7 @@ if token:
 			print(ts)
 
 			sp.user_playlist_add_tracks(username, playlist_id, ts)
-		 	print("Added Tracks")
+			print("Added Tracks")
 
 else:
 	print("Can't get token for", username)

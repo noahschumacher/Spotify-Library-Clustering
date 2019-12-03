@@ -10,6 +10,7 @@ Saves:
 		- Each list contains song_ids
 '''
 
+import pickle
 import numpy as np
 import pandas as pd
 
@@ -29,7 +30,7 @@ def standardize(df):
 
 
 ## Finds the silhouette_score
-def sil_scores(data, k):
+def sil_scores(data, k: int = 5):
     scores = []
     for i in range(2, k):
         kmeans = KMeans(n_clusters=i, random_state=0, n_jobs=-1).fit(data)
